@@ -43,7 +43,7 @@ day.
 ```
 
 
-*Copyright 2021 Jason Rose <jason@jro.io>*
+*Copyright 2021 Jason Rose*
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 following conditions are met:
