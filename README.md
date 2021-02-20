@@ -20,27 +20,26 @@ day.
 **Sample Output:**
 
 ```
-   Total Samples Parsed: 7,566 (2h 06m 06s)
-
                     Unit        50p            90p            95p            99p            Max            Avg             σ            
                    ------      -----          -----          -----          -----          -----          -----          -----          
-  Read IOPS        Ops/Sec     0              142            163            206            2009           41.72          69.65          
- Write IOPS        Ops/Sec     0              896            1005           1610           2220           199.66         405.09         
-   R+W IOPS        Ops/Sec     22             937            1062           1636           2305           241.38         410.98         
-  Read Throughput  MiB/sec     0.0            23.1           26.5           31.5           78.5           6.41           10.39          
- Write Throughput  MiB/sec     0.0            5.31           7.51           17.3           31.7           1.47           3.49           
-   R+W Throughput  MiB/sec     0.16           25.44          28.2           37.53          78.5           7.89           10.95          
-  Read IO Size     KiB         170.95         172.7          173.61         177.53         209.0          136.28         64.31          
- Write IO Size     KiB         6.33           9.97           11.43          13.78          34.38          7.04           2.12           
-  Read Tot. Lat.   mSec        2.0            17.0           19.0           25.0           116.0          5.28           7.08           
+  Read IOPS        Ops/Sec     0              142            163            202            2009           42.04          68.95          
+ Write IOPS        Ops/Sec     0              897            1006           1610           2220           199.65         404.89         
+   R+W IOPS        Ops/Sec     23             937            1065           1635           2305           241.69         410.8          
+  Read Throughput  MiB/sec     0.0            23.2           26.5           31.43          78.5           6.46           10.36          
+ Write Throughput  MiB/sec     0.0            5.32           7.52           17.23          31.7           1.47           3.48           
+   R+W Throughput  MiB/sec     0.18           25.44          28.26          37.43          78.5           7.93           10.92          
+  Read IO Size     KiB         170.92         172.7          173.61         177.69         209.0          135.44         64.93          
+ Write IO Size     KiB         6.33           9.99           11.44          13.85          34.38          7.04           2.12           
+  Read Tot. Lat.   mSec        2.0            17.0           19.0           25.0           116.0          5.39           7.08           
  Write Tot. Lat.   mSec        1.0            2.0            3.0            4.0            4.0            1.25           0.64           
   Read Disk Lat.   mSec        1.0            2.0            3.0            4.0            4.0            1.25           0.64           
- Write Disk Lat.   mSec        2.0            17.0           19.0           25.0           116.0          5.25           7.05           
+ Write Disk Lat.   mSec        2.0            17.0           19.0           25.0           116.0          5.36           7.04           
 
-  Read Mix (by Op Count): 17 %
-  Read Mix (by Size): 81 %
-  Total Written: 0.01 TiB
-  Total Written per Day: 0.12 TiB
+   Total Samples Parsed: 8,175 (2h 16m 15s)
+   Read Mix (by Op Count): 17 %
+   Read Mix (by Size): 81 %
+   Total Written: 0.01 TiB
+   Total Written per Day: 0.12 TiB
 ```
 
 
