@@ -187,9 +187,6 @@ def IOStatParse(file):
 		if (ln) % 100000 == 0:
 			print("   Parsing Line " + format(ln,",d") + "...")
 
-	# Print sample count
-	print("\n   Total Samples Parsed: " + format(ln,",d") + " (" + conv_time(ln) + ")\n")
-
 	# Percentile function requires data lists to be sorted
 	read_iops_raw = sorted(read_iops_raw)
 	write_iops_raw = sorted(write_iops_raw)
@@ -341,10 +338,11 @@ def IOStatParse(file):
 	tot_io = sum(read_iops_raw) + sum(write_iops_raw)
 	tot_tp = sum(read_tp_raw) + sum(write_tp_raw)
 	print()
-	print("  Read Mix (by Op Count): " + str(int(sum(read_iops_raw)/tot_io*100)) + " %")
-	print("  Read Mix (by Size): " + str(int(sum(read_tp_raw)/tot_tp*100)) + " %")
-	print("  Total Written: " + str(round(sum(write_tp_raw)/(1024**4),2)) + " TiB")
-	print("  Total Written per Day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),2)) + " TiB\n")
+	print("   Total Samples Parsed: " + format(ln,",d") + " (" + conv_time(ln) + ")")
+	print("   Read Mix (by Op Count): " + str(int(sum(read_iops_raw)/tot_io*100)) + " %")
+	print("   Read Mix (by Size): " + str(int(sum(read_tp_raw)/tot_tp*100)) + " %")
+	print("   Total Written: " + str(round(sum(write_tp_raw)/(1024**4),2)) + " TiB")
+	print("   Total Written per Day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),2)) + " TiB\n")
 
 def percentile(N, percent, key=lambda x:x):
 	# Find the percentile of a list of values
