@@ -140,6 +140,8 @@ def IOStatParse(file):
 						read_tot_wait = int(read_tot_wait[:-2])*1000
 					elif "ns" in read_tot_wait:
 						read_tot_wait = int(read_tot_wait[:-2])
+					else:
+						read_tot_wait = int(read_tot_wait)
 					read_tot_wait_raw.append(read_tot_wait)
 
 				# Pull total write wait, convert to nSec
@@ -151,6 +153,8 @@ def IOStatParse(file):
 						write_tot_wait = int(write_tot_wait[:-2])*1000
 					elif "ns" in write_tot_wait:
 						write_tot_wait = int(write_tot_wait[:-2])
+					else:
+						write_tot_wait = int(write_tot_wait)
 					write_tot_wait_raw.append(write_tot_wait)
 
 				# Pull disk read wait, convert to nSec
@@ -162,6 +166,8 @@ def IOStatParse(file):
 						read_disk_wait = int(read_disk_wait[:-2])*1000
 					elif "ns" in read_disk_wait:
 						read_disk_wait = int(read_disk_wait[:-2])
+					else:
+						read_disk_wait = int(read_disk_wait)
 					read_disk_wait_raw.append(read_disk_wait)
 
 				# Pull disk write wait, convert to nSec
@@ -173,6 +179,8 @@ def IOStatParse(file):
 						write_disk_wait = int(write_disk_wait[:-2])*1000
 					elif "ns" in write_disk_wait:
 						write_disk_wait = int(write_disk_wait[:-2])
+					else:
+						write_disk_wait = int(write_disk_wait)
 					write_disk_wait_raw.append(write_disk_wait)
 
 			# If -l was passed but the extra latency columns are not present, bail on the
