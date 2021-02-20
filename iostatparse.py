@@ -316,6 +316,7 @@ def IOStatParse(file):
 	row_format = "{:>7}" + "{:<12}" + "{:<12}" + "{:<15}" * 7
 
 	# Print the stats table
+	print()
 	print(row_format.format(*headers))
 	print(row_format.format(*h2))
 	print(row_format.format(*ReadIOPS))
