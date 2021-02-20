@@ -1,17 +1,19 @@
 # iostatparse.py
 
-**Usage:** iostatparse.py [-h] [-l] file
+**Usage:** `iostatparse.py [-h] [-l] file`
 
 Parse the output of zpool iostat to generate summarized performance statistics
 
+
 **Positional arguments:**
 
- file 		Text file containing the zpool iostat output to parse
+ `file` 		Text file containing the zpool iostat output to parse
 
 
 **Optional arguments:**
 
- -l 			Parse latency statistics from zpool iostat -l
+ `-l` 			Parse latency statistics from zpool iostat -l
+
 
 **Details:**
 
