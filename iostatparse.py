@@ -48,7 +48,8 @@ def IOStatParse(file):
 	read_tp_raw = []
 	write_tp_raw = []
 	both_tp_raw = []
-	io_size = []
+	read_io_size = []
+	write_io_size = []
 
 	# Initialize latency arrays
 	read_tot_wait_raw = []
@@ -119,13 +120,12 @@ def IOStatParse(file):
 		# Add read and write value to give R+W value
 		both_tp_raw.append(int(readtp) + int(writetp))
 
-		# Try to determine avg IO size by adding up all TP and dividing by all ops.
-		# Operation can fail if no ops during that second (div by zero), so pass on
-		# any errors
-		try:
-			io_size.append( (int(readtp) + int(writetp)) / (int(read) + int(write)) )
-		except:
-			pass
+		# Determine avg IO size (throughput/num. ops)
+		if int(read) != 0:
+			read_io_size.append(int(readtp)/int(read))
+
+		if int(write) != 0:
+			write_io_size.append(int(writetp)/int(write))
 
 		# Gather latency data if -l flag is passed
 		if track_latency:
@@ -196,6 +196,8 @@ def IOStatParse(file):
 	read_tp_raw = sorted(read_tp_raw)
 	write_tp_raw = sorted(write_tp_raw)
 	both_tp_raw = sorted(both_tp_raw)
+	read_io_size = sorted(read_io_size)
+	write_io_size = sorted(write_io_size)
 
 	# Sort latency values if we're
 	if track_latency:
@@ -204,8 +206,7 @@ def IOStatParse(file):
 		read_disk_wait_raw = sorted(read_disk_wait_raw)
 		write_disk_wait_raw = sorted(write_disk_wait_raw)
 
-	# Calculate 50P, 90P, 95P, 99P and max value for R/W/R+W IOPS and TP, put them in an array along with label
-	# for printing via tabulate function
+	# Calculate 50P, 90P, 95P, 99P max, avg, stdev for all states, put them in an array along with labels for printing
 	ReadIOPS = ["Read ","IOPS","Ops/Sec",
 		str(int(percentile(read_iops_raw,.50))),
 		str(int(percentile(read_iops_raw,.90))),
@@ -231,7 +232,7 @@ def IOStatParse(file):
 		str(round(avg(both_iops_raw),2)),
 		str(round(statistics.stdev(both_iops_raw),2))]
 
-	# Multiply all TP values by 1024^2 and append with "M" to indicate megabytes/sec units
+	# Multiply all throughput values by 1024^2
 	ReadTP = ["Read ","Throughput","MiB/sec",
 		str(round(int(percentile(read_tp_raw,.50))/1024**2,2)),
 		str(round(int(percentile(read_tp_raw,.90))/1024**2,2)),
@@ -256,6 +257,24 @@ def IOStatParse(file):
 		str(round(max(both_tp_raw)/1024**2,2)),
 		str(round(avg(both_tp_raw)/1024**2,2)),
 		str(round(statistics.stdev(both_tp_raw)/1024**2,2))]
+
+	# Multiply all IO size values by 1024 to convert to KiB
+	ReadIOSize =["Read ","IO Size","KiB",
+		str(round(int(percentile(read_io_size,.50))/1024,2)),
+		str(round(int(percentile(read_io_size,.90))/1024,2)),
+		str(round(int(percentile(read_io_size,.95))/1024,2)),
+		str(round(int(percentile(read_io_size,.99))/1024,2)),
+		str(round(max(read_io_size)/1024,2)),
+		str(round(avg(read_io_size)/1024,2)),
+		str(round(statistics.stdev(read_io_size)/1024,2))]
+	WriteIOSize = ["Write ","IO Size","KiB",
+		str(round(int(percentile(write_io_size,.50))/1024,2)),
+		str(round(int(percentile(write_io_size,.90))/1024,2)),
+		str(round(int(percentile(write_io_size,.95))/1024,2)),
+		str(round(int(percentile(write_io_size,.99))/1024,2)),
+		str(round(max(write_io_size)/1024,2)),
+		str(round(avg(write_io_size)/1024,2)),
+		str(round(statistics.stdev(write_io_size)/1024,2))]
 
 	# All latency values are in nSec, divide by 1M to convert to mS
 	if track_latency:
@@ -295,16 +314,20 @@ def IOStatParse(file):
 
 	# Formatting for stats table
 	headers = ['','','Unit','50p','90p','95p','99p','Max','Avg','σ']
+	h2 = [''] * 2 + ['----'] * 8
 	row_format = "{:>7}" + "{:<12}" + "{:<12}" + "{:<15}" * 7
 
 	# Print the stats table
 	print(row_format.format(*headers))
+	print(row_format.format(*h2))
 	print(row_format.format(*ReadIOPS))
 	print(row_format.format(*WriteIOPS))
 	print(row_format.format(*BothIOPS))
 	print(row_format.format(*ReadTP))
 	print(row_format.format(*WriteTP))
 	print(row_format.format(*BothTP))
+	print(row_format.format(*ReadIOSize))
+	print(row_format.format(*WriteIOSize))
 
 	# Print latency stats if l flag is passed
 	if track_latency:
@@ -319,9 +342,8 @@ def IOStatParse(file):
 	print()
 	print("  Read Mix (by op count): " + str(int(sum(read_iops_raw)/tot_io*100)) + " %")
 	print("  Read Mix (by size): " + str(int(sum(read_tp_raw)/tot_tp*100)) + " %")
-	print("  Average IO size: " + str(round(sum(io_size)/len(io_size)/1024)) + " KiB")
-	print("  Total written: " + str(round(sum(write_tp_raw)/(1024**4),1)) + " TiB")
-	print("  Total written per day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),1)) + " TiB\n")
+	print("  Total written: " + str(round(sum(write_tp_raw)/(1024**4),2)) + " TiB")
+	print("  Total written per day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),2)) + " TiB\n")
 
 def percentile(N, percent, key=lambda x:x):
 	# Find the percentile of a list of values
