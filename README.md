@@ -18,7 +18,7 @@ Also calculates R/W mix, average I/O size, total data written across iostat inte
 day.
 
 
-*Copyright 2020 Jason Rose <jason@jro.io>*
+*Copyright 2021 Jason Rose <jason@jro.io>*
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 following conditions are met:
