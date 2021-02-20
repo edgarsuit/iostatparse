@@ -185,10 +185,10 @@ def IOStatParse(file):
 
 		# Print parse status every 100K lines (longer files can take a while to parse)
 		if (ln) % 100000 == 0:
-			print("Parsing line " + format(ln,",d") + "...")
+			print("   Parsing Line " + format(ln,",d") + "...")
 
 	# Print sample count
-	print("\nTotal samples parsed: " + format(ln,",d") + "\n")
+	print("\n   Total Samples Parsed: " + format(ln,",d") + "\n")
 
 	# Percentile function requires data lists to be sorted
 	read_iops_raw = sorted(read_iops_raw)
@@ -314,8 +314,8 @@ def IOStatParse(file):
 			str(round(statistics.stdev(write_disk_wait_raw)/1000000,2))]
 
 	# Formatting for stats table
-	headers = ['','','Unit','50p','90p','95p','99p','Max','Avg',' σ']
-	h2 = [''] * 2 + ['----'] * 8
+	headers = ['','',' Unit',' 50p',' 90p',' 95p',' 99p',' Max',' Avg','  σ']
+	h2 = [''] * 2 + ['------'] + ['-----'] * 7
 	row_format = "{:>7}" + "{:<12}" + "{:<12}" + "{:<15}" * 7
 
 	# Print the stats table
@@ -341,10 +341,10 @@ def IOStatParse(file):
 	tot_io = sum(read_iops_raw) + sum(write_iops_raw)
 	tot_tp = sum(read_tp_raw) + sum(write_tp_raw)
 	print()
-	print("  Read Mix (by op count): " + str(int(sum(read_iops_raw)/tot_io*100)) + " %")
-	print("  Read Mix (by size): " + str(int(sum(read_tp_raw)/tot_tp*100)) + " %")
-	print("  Total written: " + str(round(sum(write_tp_raw)/(1024**4),2)) + " TiB")
-	print("  Total written per day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),2)) + " TiB\n")
+	print("  Read Mix (by Op Count): " + str(int(sum(read_iops_raw)/tot_io*100)) + " %")
+	print("  Read Mix (by Size): " + str(int(sum(read_tp_raw)/tot_tp*100)) + " %")
+	print("  Total Written: " + str(round(sum(write_tp_raw)/(1024**4),2)) + " TiB")
+	print("  Total Written per Day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),2)) + " TiB\n")
 
 def percentile(N, percent, key=lambda x:x):
 	# Find the percentile of a list of values
