@@ -35,6 +35,7 @@
 import argparse
 import re
 import math
+import statistics
 
 def IOStatParse(file):
 	# Track line count
@@ -98,9 +99,9 @@ def IOStatParse(file):
 		# Pull out read TP data. Multiply by 1024 if "K", 1024^2 if "M", 1024^3 if "G" in value
 		readtp = data[5]
 		if "G" in readtp:
-			readtp = int(float(readtp[:-1])*pow(1024,3))
+			readtp = int(float(readtp[:-1])*1024**3)
 		elif "M" in readtp:
-			readtp = int(float(readtp[:-1])*pow(1024,2))
+			readtp = int(float(readtp[:-1])*1024**2)
 		elif "K" in readtp:
 			readtp = int(float(readtp[:-1])*1024)
 		read_tp_raw.append(int(readtp))
@@ -108,9 +109,9 @@ def IOStatParse(file):
 		# Pull out write TP data. Multiply by 1024 if "K", 1024^2 if "M", 1024^3 if "G" in value
 		writetp = data[6]
 		if "G" in writetp:
-			writetp = int(float(writetp[:-1])*pow(1024,3))
+			writetp = int(float(writetp[:-1])*1024**3)
 		elif "M" in writetp:
-			writetp = int(float(writetp[:-1])*pow(1024,2))
+			writetp = int(float(writetp[:-1])*1024**2)
 		elif "K" in writetp:
 			writetp = int(float(writetp[:-1])*1024)
 		write_tp_raw.append(int(writetp))
@@ -205,79 +206,96 @@ def IOStatParse(file):
 
 	# Calculate 50P, 90P, 95P, 99P and max value for R/W/R+W IOPS and TP, put them in an array along with label
 	# for printing via tabulate function
-	ReadIOPS = ["Read ","IOPS",
+	ReadIOPS = ["Read ","IOPS","Ops/Sec",
 		str(int(percentile(read_iops_raw,.50))),
 		str(int(percentile(read_iops_raw,.90))),
 		str(int(percentile(read_iops_raw,.95))),
 		str(int(percentile(read_iops_raw,.99))),
-		str(max(read_iops_raw))]
-	WriteIOPS = ["Write ","IOPS",
+		str(max(read_iops_raw)),
+		str(round(avg(read_iops_raw),2)),
+		str(round(statistics.stdev(read_iops_raw),2))]
+	WriteIOPS = ["Write ","IOPS","Ops/Sec",
 		str(int(percentile(write_iops_raw,.50))),
 		str(int(percentile(write_iops_raw,.90))),
 		str(int(percentile(write_iops_raw,.95))),
 		str(int(percentile(write_iops_raw,.99))),
-		str(max(write_iops_raw))]
-	BothIOPS = ["R+W ","IOPS",
+		str(max(write_iops_raw)),
+		str(round(avg(write_iops_raw),2)),
+		str(round(statistics.stdev(write_iops_raw),2))]
+	BothIOPS = ["R+W ","IOPS","Ops/Sec",
 		str(int(percentile(both_iops_raw,.50))),
 		str(int(percentile(both_iops_raw,.90))),
 		str(int(percentile(both_iops_raw,.95))),
 		str(int(percentile(both_iops_raw,.99))),
-		str(max(both_iops_raw))]
+		str(max(both_iops_raw)),
+		str(round(avg(both_iops_raw),2)),
+		str(round(statistics.stdev(both_iops_raw),2))]
 
 	# Multiply all TP values by 1024^2 and append with "M" to indicate megabytes/sec units
-	ReadTP = ["Read ","TP",
-		str(round(int(percentile(read_tp_raw,.50))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(read_tp_raw,.90))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(read_tp_raw,.95))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(read_tp_raw,.99))/pow(1024,2),1)) + " MiB",
-		str(round(max(read_tp_raw)/pow(1024,2),1)) + " MiB"]
-	WriteTP = ["Write ","TP",
-		str(round(int(percentile(write_tp_raw,.50))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(write_tp_raw,.90))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(write_tp_raw,.95))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(write_tp_raw,.99))/pow(1024,2),1)) + " MiB",
-		str(round(max(write_tp_raw)/pow(1024,2),1)) + " MiB"]
-	BothTP = ["R+W ","TP",
-		str(round(int(percentile(both_tp_raw,.50))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(both_tp_raw,.90))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(both_tp_raw,.95))/pow(1024,2),1)) + " MiB",
-		str(round(int(percentile(both_tp_raw,.99))/pow(1024,2),1)) + " MiB",
-		str(round(max(both_tp_raw)/pow(1024,2),1)) + " MiB"]
+	ReadTP = ["Read ","Throughput","MiB/sec",
+		str(round(int(percentile(read_tp_raw,.50))/1024**2,2)),
+		str(round(int(percentile(read_tp_raw,.90))/1024**2,2)),
+		str(round(int(percentile(read_tp_raw,.95))/1024**2,2)),
+		str(round(int(percentile(read_tp_raw,.99))/1024**2,2)),
+		str(round(max(read_tp_raw)/1024**2,2)),
+		str(round(avg(read_tp_raw)/1024**2,2)),
+		str(round(statistics.stdev(read_tp_raw)/1024**2,2))]
+	WriteTP = ["Write ","Throughput","MiB/sec",
+		str(round(int(percentile(write_tp_raw,.50))/1024**2,2)),
+		str(round(int(percentile(write_tp_raw,.90))/1024**2,2)),
+		str(round(int(percentile(write_tp_raw,.95))/1024**2,2)),
+		str(round(int(percentile(write_tp_raw,.99))/1024**2,2)),
+		str(round(max(write_tp_raw)/1024**2,2)),
+		str(round(avg(write_tp_raw)/1024**2,2)),
+		str(round(statistics.stdev(write_tp_raw)/1024**2,2))]
+	BothTP = ["R+W ","Throughput","MiB/sec",
+		str(round(int(percentile(both_tp_raw,.50))/1024**2,2)),
+		str(round(int(percentile(both_tp_raw,.90))/1024**2,2)),
+		str(round(int(percentile(both_tp_raw,.95))/1024**2,2)),
+		str(round(int(percentile(both_tp_raw,.99))/1024**2,2)),
+		str(round(max(both_tp_raw)/1024**2,2)),
+		str(round(avg(both_tp_raw)/1024**2,2)),
+		str(round(statistics.stdev(both_tp_raw)/1024**2,2))]
 
 	# All latency values are in nSec, divide by 1M to convert to mS
 	if track_latency:
-		ReadTotWait = ["Read ","Tot. Wait",
-			str(round(percentile(read_tot_wait_raw,.50)/1000000,4)) + " mS",
-			str(round(percentile(read_tot_wait_raw,.90)/1000000,4)) + " mS",
-			str(round(percentile(read_tot_wait_raw,.95)/1000000,4)) + " mS",
-			str(round(percentile(read_tot_wait_raw,.99)/1000000,4)) + " mS",
-			str(round(max(read_tot_wait_raw)/1000000,4)) + " mS"]
-		WriteTotWait = ["Write ","Tot. Wait",
-			str(round(percentile(write_tot_wait_raw,.50)/1000000,4)) + " mS",
-			str(round(percentile(write_tot_wait_raw,.90)/1000000,4)) + " mS",
-			str(round(percentile(write_tot_wait_raw,.95)/1000000,4)) + " mS",
-			str(round(percentile(write_tot_wait_raw,.99)/1000000,4)) + " mS",
-			str(round(max(write_tot_wait_raw)/1000000,4)) + " mS"]
-		ReadDiskWait = ["Read ","Tot. Wait",
-			str(round(percentile(read_disk_wait_raw,.50)/1000000,4)) + " mS",
-			str(round(percentile(read_disk_wait_raw,.90)/1000000,4)) + " mS",
-			str(round(percentile(read_disk_wait_raw,.95)/1000000,4)) + " mS",
-			str(round(percentile(read_disk_wait_raw,.99)/1000000,4)) + " mS",
-			str(round(max(read_disk_wait_raw)/1000000,4)) + " mS"]
-		WriteDiskWait = ["Write ","Tot. Wait",
-			str(round(percentile(write_disk_wait_raw,.50)/1000000,4)) + " mS",
-			str(round(percentile(write_disk_wait_raw,.90)/1000000,4)) + " mS",
-			str(round(percentile(write_disk_wait_raw,.95)/1000000,4)) + " mS",
-			str(round(percentile(write_disk_wait_raw,.99)/1000000,4)) + " mS",
-			str(round(max(write_disk_wait_raw)/1000000,4)) + " mS"]
+		ReadTotWait = ["Read ","Tot. Lat.","mSec",
+			str(round(percentile(read_tot_wait_raw,.50)/1000000,2)),
+			str(round(percentile(read_tot_wait_raw,.90)/1000000,2)),
+			str(round(percentile(read_tot_wait_raw,.95)/1000000,2)),
+			str(round(percentile(read_tot_wait_raw,.99)/1000000,2)),
+			str(round(max(read_tot_wait_raw)/1000000,2)),
+			str(round(avg(read_tot_wait_raw)/1000000,2)),
+			str(round(statistics.stdev(read_tot_wait_raw)/1000000,2))]
+		WriteTotWait = ["Write ","Tot. Lat.","mSec",
+			str(round(percentile(write_tot_wait_raw,.50)/1000000,2)),
+			str(round(percentile(write_tot_wait_raw,.90)/1000000,2)),
+			str(round(percentile(write_tot_wait_raw,.95)/1000000,2)),
+			str(round(percentile(write_tot_wait_raw,.99)/1000000,2)),
+			str(round(max(write_tot_wait_raw)/1000000,2)),
+			str(round(avg(write_tot_wait_raw)/1000000,2)),
+			str(round(statistics.stdev(write_tot_wait_raw)/1000000,2))]
+
+		ReadDiskWait = ["Read ","Disk Lat.","mSec",
+			str(round(percentile(read_disk_wait_raw,.50)/1000000,2)),
+			str(round(percentile(read_disk_wait_raw,.90)/1000000,2)),
+			str(round(percentile(read_disk_wait_raw,.95)/1000000,2)),
+			str(round(percentile(read_disk_wait_raw,.99)/1000000,2)),
+			str(round(max(read_disk_wait_raw)/1000000,2)),
+			str(round(avg(read_disk_wait_raw)/1000000,2)),
+			str(round(statistics.stdev(read_disk_wait_raw)/1000000,2))]
+		WriteDiskWait = ["Write ","Disk Lat.","mSec",
+			str(round(percentile(write_disk_wait_raw,.50)/1000000,2)),
+			str(round(percentile(write_disk_wait_raw,.90)/1000000,2)),
+			str(round(percentile(write_disk_wait_raw,.95)/1000000,2)),
+			str(round(percentile(write_disk_wait_raw,.99)/1000000,2)),
+			str(round(max(write_disk_wait_raw)/1000000,2)),
+			str(round(avg(write_disk_wait_raw)/1000000,2)),
+			str(round(statistics.stdev(write_disk_wait_raw)/1000000,2))]
 
 	# Formatting for stats table
-	headers = ['','','50p','90p','95p','99p','Max']
-	if not track_latency:
-		row_format = "{:>7}" + "{:<7}" + "{:<15}" * 5
-	else:
-		# Text in the row headers for latency values are longer, so use different formatting
-		row_format = "{:>7}" + "{:<12}" + "{:<15}" * 5
+	headers = ['','','Unit','50p','90p','95p','99p','Max','Avg','σ']
+	row_format = "{:>7}" + "{:<12}" + "{:<12}" + "{:<15}" * 7
 
 	# Print the stats table
 	print(row_format.format(*headers))
@@ -297,11 +315,13 @@ def IOStatParse(file):
 
 	# Calculate and print other misc. stats
 	tot_io = sum(read_iops_raw) + sum(write_iops_raw)
+	tot_tp = sum(read_tp_raw) + sum(write_tp_raw)
 	print()
-	print("  Read Mix: " + str(int(sum(read_iops_raw)/tot_io*100)) + "%")
-	print("  Average IO size: " + str(round(sum(io_size)/len(io_size)/1000)) + " K")
-	print("  Total written: " + str(round(sum(write_tp_raw)/(1000**4),1)) + " T")
-	print("  Total written per day: " + str(round(sum(write_tp_raw)/(1000**4)/((ln)/86400),1)) + " T\n")
+	print("  Read Mix (by op count): " + str(int(sum(read_iops_raw)/tot_io*100)) + " %")
+	print("  Read Mix (by size): " + str(int(sum(read_tp_raw)/tot_tp*100)) + " %")
+	print("  Average IO size: " + str(round(sum(io_size)/len(io_size)/1024)) + " KiB")
+	print("  Total written: " + str(round(sum(write_tp_raw)/(1024**4),1)) + " TiB")
+	print("  Total written per day: " + str(round(sum(write_tp_raw)/(1024**4)/((ln)/86400),1)) + " TiB\n")
 
 def percentile(N, percent, key=lambda x:x):
 	# Find the percentile of a list of values
@@ -320,10 +340,13 @@ def percentile(N, percent, key=lambda x:x):
 	d1 = key(N[int(c)]) * (k-f)
 	return d0+d1
 
+def avg(N):
+	return sum(N) / len(N)
+
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
 		description="Parse the output of zpool iostat to generate summarized performance statistics")
 	parser.add_argument("file", help="Text file containing the zpool iostat output to parse")
 	args = parser.parse_args()
 
-	IOStatParse(args.file,args.l)
+	IOStatParse(args.file)
