@@ -96,24 +96,24 @@ def IOStatParse(file, l):
 		# Add read and write value to give R+W value
 		both_iops_raw.append(int(read) + int(write))
 
-		# Pull out read TP data. Multiply by 1K if "K", 1M if "M", 1B if "G" in value
+		# Pull out read TP data. Multiply by 1024 if "K", 1024^2 if "M", 1024^3 if "G" in value
 		readtp = data[5]
 		if "G" in readtp:
-			readtp = int(float(readtp[:-1])*1000000000)
+			readtp = int(float(readtp[:-1])*pow(1024,3))
 		elif "M" in readtp:
-			readtp = int(float(readtp[:-1])*1000000)
+			readtp = int(float(readtp[:-1])*pow(1024,2))
 		elif "K" in readtp:
-			readtp = int(float(readtp[:-1])*1000)
+			readtp = int(float(readtp[:-1])*1024)
 		read_tp_raw.append(int(readtp))
 
-		# Pull out write TP data. Multiply by 1K if "K", 1M if "M", 1B if "G" in value
+		# Pull out write TP data. Multiply by 1024 if "K", 1024^2 if "M", 1024^3 if "G" in value
 		writetp = data[6]
 		if "G" in writetp:
-			writetp = int(float(writetp[:-1])*1000000000)
+			writetp = int(float(writetp[:-1])*pow(1024,3))
 		elif "M" in writetp:
-			writetp = int(float(writetp[:-1])*1000000)
+			writetp = int(float(writetp[:-1])*pow(1024,2))
 		elif "K" in writetp:
-			writetp = int(float(writetp[:-1])*1000)
+			writetp = int(float(writetp[:-1])*1024)
 		write_tp_raw.append(int(writetp))
 
 		# Add read and write value to give R+W value
@@ -226,25 +226,25 @@ def IOStatParse(file, l):
 		str(int(percentile(both_iops_raw,.99))),
 		str(max(both_iops_raw))]
 
-	# Multiply all TP values by 1M and append with "M" to indicate megabytes/sec units
+	# Multiply all TP values by 1024^2 and append with "M" to indicate megabytes/sec units
 	ReadTP = ["Read ","TP",
-		str(round(int(percentile(read_tp_raw,.50))/1000000,1)) + " M",
-		str(round(int(percentile(read_tp_raw,.90))/1000000,1)) + " M",
-		str(round(int(percentile(read_tp_raw,.95))/1000000,1)) + " M",
-		str(round(int(percentile(read_tp_raw,.99))/1000000,1)) + " M",
-		str(round(max(read_tp_raw)/1000000,1)) + " M"]
+		str(round(int(percentile(read_tp_raw,.50))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(read_tp_raw,.90))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(read_tp_raw,.95))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(read_tp_raw,.99))/pow(1024,2),1)) + " MiB",
+		str(round(max(read_tp_raw)/pow(1024,2),1)) + " MiB"]
 	WriteTP = ["Write ","TP",
-		str(round(int(percentile(write_tp_raw,.50))/1000000,1)) + " M",
-		str(round(int(percentile(write_tp_raw,.90))/1000000,1)) + " M",
-		str(round(int(percentile(write_tp_raw,.95))/1000000,1)) + " M",
-		str(round(int(percentile(write_tp_raw,.99))/1000000,1)) + " M",
-		str(round(max(write_tp_raw)/1000000,1)) + " M"]
+		str(round(int(percentile(write_tp_raw,.50))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(write_tp_raw,.90))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(write_tp_raw,.95))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(write_tp_raw,.99))/pow(1024,2),1)) + " MiB",
+		str(round(max(write_tp_raw)/pow(1024,2),1)) + " MiB"]
 	BothTP = ["R+W ","TP",
-		str(round(int(percentile(both_tp_raw,.50))/1000000,1)) + " M",
-		str(round(int(percentile(both_tp_raw,.90))/1000000,1)) + " M",
-		str(round(int(percentile(both_tp_raw,.95))/1000000,1)) + " M",
-		str(round(int(percentile(both_tp_raw,.99))/1000000,1)) + " M",
-		str(round(max(both_tp_raw)/1000000,1)) + " M"]
+		str(round(int(percentile(both_tp_raw,.50))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(both_tp_raw,.90))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(both_tp_raw,.95))/pow(1024,2),1)) + " MiB",
+		str(round(int(percentile(both_tp_raw,.99))/pow(1024,2),1)) + " MiB",
+		str(round(max(both_tp_raw)/pow(1024,2),1)) + " MiB"]
 
 	# All latency values are in nSec, divide by 1M to convert to mS
 	if l:
