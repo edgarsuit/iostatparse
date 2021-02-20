@@ -188,7 +188,7 @@ def IOStatParse(file):
 			print("   Parsing Line " + format(ln,",d") + "...")
 
 	# Print sample count
-	print("\n   Total Samples Parsed: " + format(ln,",d") + "\n")
+	print("\n   Total Samples Parsed: " + format(ln,",d") + " (" + conv_time(ln) + ")\n")
 
 	# Percentile function requires data lists to be sorted
 	read_iops_raw = sorted(read_iops_raw)
@@ -364,7 +364,26 @@ def percentile(N, percent, key=lambda x:x):
 	return d0+d1
 
 def avg(N):
+	# Return average value of a list N
 	return sum(N) / len(N)
+
+def conv_time(sec):
+	# Convert seconds
+	[d,h,m,s] = [0,0,0,0]
+	m, s = divmod(sec, 60)
+	h, m = divmod(m, 60)
+	d, h = divmod(h, 24)
+	# Format seconds output with two decimal places so it aligns with row above
+	if d != 0:
+		t = str(round(d)) + "d " + "{:02}".format(round(h)) + "h " + "{:02}".format(round(m)) + "m " \
+			+ "{:02}".format(s) + "s"
+	elif h != 0:
+		t = str(round(h)) + "h " + "{:02}".format(round(m)) + "m " + "{:02}".format(s) + "s"
+	elif m != 0:
+		t = str(round(m)) + "m " + "{:02}".format(s) + "s"
+	else:
+		t = "{:2}".format(s) + "s"
+	return t
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(
