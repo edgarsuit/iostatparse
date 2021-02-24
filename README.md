@@ -1,13 +1,13 @@
 # iostatparse.py
 
-**Usage:** `iostatparse.py [-h] file`
+**Usage:** `iostatparse.py [-h] file [file ...]`
 
 Parse the output of zpool iostat to generate summarized performance statistics
 
 
 **Positional arguments:**
 
- `file` 		Text file containing the zpool iostat output to parse
+ `file` 		Text file(s) containing the zpool iostat output to parse
 
 
 **Details:**
