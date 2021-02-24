@@ -214,6 +214,10 @@ def IOStatParse(files):
 		write_disk_wait_raw = sorted(write_disk_wait_raw)
 
 	# Calculate 50P, 90P, 95P, 99P max, avg, stdev for all states, put them in an array along with labels for printing
+	try:
+		ReadIOPS_stdev = str(round(statistics.stdev(read_iops_raw),2))
+	except:
+		ReadIOPS_stdev = "-"
 	ReadIOPS = ["Read ","IOPS","Ops/Sec",
 		str(int(percentile(read_iops_raw,.50))),
 		str(int(percentile(read_iops_raw,.90))),
@@ -221,7 +225,11 @@ def IOStatParse(files):
 		str(int(percentile(read_iops_raw,.99))),
 		str(max(read_iops_raw)),
 		str(round(avg(read_iops_raw),2)),
-		str(round(statistics.stdev(read_iops_raw),2))]
+		ReadIOPS_stdev]
+	try:
+		WriteIOPS_stdev = str(round(statistics.stdev(write_iops_raw),2))
+	except:
+		WriteIOPS_stdev = "-"
 	WriteIOPS = ["Write ","IOPS","Ops/Sec",
 		str(int(percentile(write_iops_raw,.50))),
 		str(int(percentile(write_iops_raw,.90))),
@@ -229,7 +237,11 @@ def IOStatParse(files):
 		str(int(percentile(write_iops_raw,.99))),
 		str(max(write_iops_raw)),
 		str(round(avg(write_iops_raw),2)),
-		str(round(statistics.stdev(write_iops_raw),2))]
+		WriteIOPS_stdev]
+	try:
+		BothIOPS_stdev = str(round(statistics.stdev(both_iops_raw),2))
+	except:
+		BothIOPS_stdev = "-"
 	BothIOPS = ["R+W ","IOPS","Ops/Sec",
 		str(int(percentile(both_iops_raw,.50))),
 		str(int(percentile(both_iops_raw,.90))),
@@ -237,9 +249,13 @@ def IOStatParse(files):
 		str(int(percentile(both_iops_raw,.99))),
 		str(max(both_iops_raw)),
 		str(round(avg(both_iops_raw),2)),
-		str(round(statistics.stdev(both_iops_raw),2))]
+		BothIOPS_stdev]
 
 	# Multiply all throughput values by 1024^2
+	try:
+		ReadTP_stdev = str(round(statistics.stdev(read_tp_raw),2))
+	except:
+		ReadTP_stdev = "-"
 	ReadTP = ["Read ","Throughput","MiB/sec",
 		str(round(int(percentile(read_tp_raw,.50))/1024**2,2)),
 		str(round(int(percentile(read_tp_raw,.90))/1024**2,2)),
@@ -247,7 +263,11 @@ def IOStatParse(files):
 		str(round(int(percentile(read_tp_raw,.99))/1024**2,2)),
 		str(round(max(read_tp_raw)/1024**2,2)),
 		str(round(avg(read_tp_raw)/1024**2,2)),
-		str(round(statistics.stdev(read_tp_raw)/1024**2,2))]
+		ReadTP_stdev]
+	try:
+		WriteTP_stdev = str(round(statistics.stdev(write_tp_raw),2))
+	except:
+		WriteTP_stdev = "-"
 	WriteTP = ["Write ","Throughput","MiB/sec",
 		str(round(int(percentile(write_tp_raw,.50))/1024**2,2)),
 		str(round(int(percentile(write_tp_raw,.90))/1024**2,2)),
@@ -255,7 +275,11 @@ def IOStatParse(files):
 		str(round(int(percentile(write_tp_raw,.99))/1024**2,2)),
 		str(round(max(write_tp_raw)/1024**2,2)),
 		str(round(avg(write_tp_raw)/1024**2,2)),
-		str(round(statistics.stdev(write_tp_raw)/1024**2,2))]
+		WriteTP_stdev]
+	try:
+		BothTP_stdev = str(round(statistics.stdev(both_tp_raw),2))
+	except:
+		BothTP_stdev = "-"
 	BothTP = ["R+W ","Throughput","MiB/sec",
 		str(round(int(percentile(both_tp_raw,.50))/1024**2,2)),
 		str(round(int(percentile(both_tp_raw,.90))/1024**2,2)),
@@ -263,9 +287,13 @@ def IOStatParse(files):
 		str(round(int(percentile(both_tp_raw,.99))/1024**2,2)),
 		str(round(max(both_tp_raw)/1024**2,2)),
 		str(round(avg(both_tp_raw)/1024**2,2)),
-		str(round(statistics.stdev(both_tp_raw)/1024**2,2))]
+		BothTP_stdev]
 
 	# Multiply all IO size values by 1024 to convert to KiB
+	try:
+		ReadIOSize_stdev = str(round(statistics.stdev(read_io_size_raw),2))
+	except:
+		ReadIOSize_stdev = "-"
 	ReadIOSize =["Read ","IO Size","KiB",
 		str(round(int(percentile(read_io_size,.50))/1024,2)),
 		str(round(int(percentile(read_io_size,.90))/1024,2)),
@@ -273,7 +301,11 @@ def IOStatParse(files):
 		str(round(int(percentile(read_io_size,.99))/1024,2)),
 		str(round(max(read_io_size)/1024,2)),
 		str(round(avg(read_io_size)/1024,2)),
-		str(round(statistics.stdev(read_io_size)/1024,2))]
+		ReadIOSize_stdev]
+	try:
+		WriteIOSize_stdev = str(round(statistics.stdev(write_io_size_raw),2))
+	except:
+		WriteIOSize_stdev = "-"
 	WriteIOSize = ["Write ","IO Size","KiB",
 		str(round(int(percentile(write_io_size,.50))/1024,2)),
 		str(round(int(percentile(write_io_size,.90))/1024,2)),
@@ -281,10 +313,14 @@ def IOStatParse(files):
 		str(round(int(percentile(write_io_size,.99))/1024,2)),
 		str(round(max(write_io_size)/1024,2)),
 		str(round(avg(write_io_size)/1024,2)),
-		str(round(statistics.stdev(write_io_size)/1024,2))]
+		WriteIOSize_stdev]
 
 	# All latency values are in nSec, divide by 1M to convert to mS
 	if track_latency:
+		try:
+			ReadTotWait_stdev = str(round(statistics.stdev(read_tot_wait_raw),2))
+		except:
+			ReadTotWait_stdev = "-"
 		ReadTotWait = ["Read ","Tot. Lat.","mSec",
 			str(round(percentile(read_tot_wait_raw,.50)/1000000,2)),
 			str(round(percentile(read_tot_wait_raw,.90)/1000000,2)),
@@ -292,7 +328,11 @@ def IOStatParse(files):
 			str(round(percentile(read_tot_wait_raw,.99)/1000000,2)),
 			str(round(max(read_tot_wait_raw)/1000000,2)),
 			str(round(avg(read_tot_wait_raw)/1000000,2)),
-			str(round(statistics.stdev(read_tot_wait_raw)/1000000,2))]
+			ReadTotWait_stdev]
+		try:
+			WriteTotWait_stdev = str(round(statistics.stdev(write_tot_wait_raw),2))
+		except:
+			WriteTotWait_stdev = "-"
 		WriteTotWait = ["Write ","Tot. Lat.","mSec",
 			str(round(percentile(write_tot_wait_raw,.50)/1000000,2)),
 			str(round(percentile(write_tot_wait_raw,.90)/1000000,2)),
@@ -300,8 +340,12 @@ def IOStatParse(files):
 			str(round(percentile(write_tot_wait_raw,.99)/1000000,2)),
 			str(round(max(write_tot_wait_raw)/1000000,2)),
 			str(round(avg(write_tot_wait_raw)/1000000,2)),
-			str(round(statistics.stdev(write_tot_wait_raw)/1000000,2))]
+			WriteTotWait_stdev]
 
+		try:
+			ReadDiskWait_stdev = str(round(statistics.stdev(read_disk_wait_raw),2))
+		except:
+			ReadDiskWait_stdev = "-"
 		ReadDiskWait = ["Read ","Disk Lat.","mSec",
 			str(round(percentile(read_disk_wait_raw,.50)/1000000,2)),
 			str(round(percentile(read_disk_wait_raw,.90)/1000000,2)),
@@ -309,7 +353,11 @@ def IOStatParse(files):
 			str(round(percentile(read_disk_wait_raw,.99)/1000000,2)),
 			str(round(max(read_disk_wait_raw)/1000000,2)),
 			str(round(avg(read_disk_wait_raw)/1000000,2)),
-			str(round(statistics.stdev(read_disk_wait_raw)/1000000,2))]
+			ReadDiskWait_stdev]
+		try:
+			WriteDiskWait_stdev = str(round(statistics.stdev(write_disk_wait_raw),2))
+		except:
+			WriteDiskWait_stdev = "-"
 		WriteDiskWait = ["Write ","Disk Lat.","mSec",
 			str(round(percentile(write_disk_wait_raw,.50)/1000000,2)),
 			str(round(percentile(write_disk_wait_raw,.90)/1000000,2)),
@@ -317,7 +365,7 @@ def IOStatParse(files):
 			str(round(percentile(write_disk_wait_raw,.99)/1000000,2)),
 			str(round(max(write_disk_wait_raw)/1000000,2)),
 			str(round(avg(write_disk_wait_raw)/1000000,2)),
-			str(round(statistics.stdev(write_disk_wait_raw)/1000000,2))]
+			WriteDiskWait_stdev]
 
 	# Formatting for stats table
 	headers = ['','',' Unit',' 50p',' 90p',' 95p',' 99p',' Max',' Avg','  σ']
